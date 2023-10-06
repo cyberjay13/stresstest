@@ -53,9 +53,6 @@ def wait_for_hours(hours):
         # Resetting stdout to original
         sys.stdout = original_stdout
     
-    # Stopping the Docker container associated with the model
-    os.system(f"docker rmi -r {container_id}")
-    
     # Wait for the specified number of hours
     wait_for_hours(hours_to_wait)
     
