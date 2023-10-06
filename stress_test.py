@@ -42,45 +42,19 @@ def wait_for_hours(hours):
     wait_time = datetime.timedelta(hours=hours)
     time.sleep(wait_time.total_seconds())
 
-def stress_test(config_file):
-    with open(config_file, 'r') as f:
-        config = json.load(f)
-    
-    model_id = config["model_id"]
-    
     # Redirecting print statements to a .txt file
     original_stdout = sys.stdout
     with open('stress_test_results.txt', 'a') as f:
         sys.stdout = f
         
         # Simulating the stress test
-        print(f"Starting stress test for model {model_id}...")
+        print(f"Starting stress test for model {model_ids}...")
         
         # Resetting stdout to original
         sys.stdout = original_stdout
     
     # Stopping the Docker container associated with the model
-    os.system(f"docker stop {model_id}")
-    
-    # Starting the next model (assuming it's defined in the next config file)
-    next_config_file = config_file.replace('.json', '2.json')
-    if os.path.exists(next_config_file):
-        with open(next_config_file, 'r') as f:
-            next_config = json.load(f)
-        next_model_id = next_config["model_id"]
-        os.system(f"docker start {next_model_id}")
-
-def run_stress_tests():
-    # List of config files
-    config_files = ["stress_test_config.json", "stress_test_config2.json"]  # Add more files as needed
-    for config_file in config_files:
-        stress_test(config_file)
-
-if __name__ == "__main__":
-    # Load the number of hours to wait from stress_test_config.json
-    with open("stress_test_config.json", 'r') as f:
-        config = json.load(f)
-    hours_to_wait = config["hours_to_wait"]
+    os.system(f"docker rmi -r {container_id}")
     
     # Wait for the specified number of hours
     wait_for_hours(hours_to_wait)
